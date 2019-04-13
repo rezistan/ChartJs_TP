@@ -1,0 +1,4 @@
+tr.jsgrid-highlight-row td.jsgrid-cell {
+	background: rgba(68, 173, 234, 0.2);
+	border-color: white;
+}
