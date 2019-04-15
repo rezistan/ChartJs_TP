@@ -104,8 +104,12 @@ function createCharts(){
                 callbacks: {
                     label: function(tooltipItem, data) {
                         var dataset = data.datasets[tooltipItem.datasetIndex];
-                        var currentValue = dataset.data[tooltipItem.index];       
-                        return dataset.label[tooltipItem.index]+' : '+currentValue;
+                        var total = dataset.data.reduce(function(previousValue, currentValue) {
+                            return previousValue + currentValue;
+                        });
+                        var currentValue = dataset.data[tooltipItem.index];
+                        var percentage = Math.floor(((currentValue/total) * 100)+0.5);
+                        return dataset.label[tooltipItem.index]+' : '+percentage + "%";
                     }   
                 }
             },
