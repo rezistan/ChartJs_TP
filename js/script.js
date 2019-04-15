@@ -339,7 +339,8 @@ function updateGrid(chart, index){
     var grid = $("#gridDetails");
     var gridDetails = grid.jsGrid("option", "data");
     if(chart.config.type === 'bar'){
-        gridDetails[index].cacher = meta.controller.chart.chart.config.data.datasets[index]._meta[1].hidden;
+        var dataset = meta.controller.chart.chart.config.data.datasets[index];
+        gridDetails[index].cacher = dataset._meta[1].hidden;
         hideSlices(camembert, index);
     }
     else{
