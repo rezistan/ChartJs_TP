@@ -93,7 +93,7 @@ function fillGrid(datas){
 function createCharts(){
     var ctx = document.getElementById('camembert').getContext('2d');
     camembert = new Chart(ctx, {
-        type: 'doughnut',
+        type: 'pie',
         datasets: [],
         options: {
             title: {
@@ -250,7 +250,7 @@ function hideSlices(ci, index){
 
     var meta1 = ci.getDatasetMeta(0).data[index];
     meta1.hidden = !meta1.hidden;
-    for(j in toHide){
+    for(var j in toHide){
         var meta = ci.getDatasetMeta(1).data[toHide[j]];
         meta.hidden = !meta.hidden;
     }
@@ -276,7 +276,7 @@ var sliceClickHandler = function(e, args) {
                 if(datasetIndex === 1){
                     for(var i in aConfigDataSets){
                         if(aConfigDataSets[i].includes(index)){
-                            type += ' ('+ci.data.datasets[0].label[i]+')'; //type des animaux
+                            type+=' ('+ci.data.datasets[0].label[i]+')';//type des animaux
                         }
                     }
                 }
@@ -334,18 +334,19 @@ function gridDetails(data) {
  * update gridDetails
  */
 function updateGrid(chart, index){
-    //var meta = chart.getDatasetMeta(0).data[index];
-    var meta = chart.getDatasetMeta(0);
+    var meta = chart.getDatasetMeta(0).data[index];
     var grid = $("#gridDetails");
     var gridDetails = grid.jsGrid("option", "data");
     if(chart.config.type === 'bar'){
-        var dataset = meta.controller.chart.chart.config.data.datasets[index];
+        var dataset = chart.config.data.datasets[index];
         gridDetails[index].cacher = dataset._meta[1].hidden;
         hideSlices(camembert, index);
     }
     else{
-        gridDetails[index].cacher = meta.data[index].hidden;
-        //meta.controller.chart.chart.config.data.datasets[index]._meta[1].hidden = meta.data[index].hidden;
+        gridDetails[index].cacher = meta.hidden;
+        var slice = baton.config.data.datasets[index];
+        slice._meta[1].hidden = meta.hidden;
+        baton.update();
     }
     grid.jsGrid("refresh");
 }
