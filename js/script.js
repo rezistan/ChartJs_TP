@@ -52,7 +52,6 @@ $(document).ready(function(){
 * Formatte les données et remplit le JsGrid
 */
 function fillGrid(datas){
-    //console.log(datas);
     var groupes = Object.values(datas);
     var aLabels = Object.keys(datas[0]);
     var aFields = [];
@@ -131,6 +130,12 @@ function createCharts(){
                 text: 'Bar Repartition Animaux'
             },
             onClick: sliceClickHandler,
+            legend: {
+                onClick: function(e, legendItem){
+                    Chart.defaults.global.legend.onClick.call(this, e, legendItem); //rajout this!!!
+                    updateGrid(this.chart, legendItem.datasetIndex);
+                }
+            },
             scales: {
                 xAxes: [{
                     stacked: true
@@ -139,9 +144,6 @@ function createCharts(){
                     stacked: true,
                     beginAtZero: true
                 }]
-            },
-            animation:{
-                duration: 1000
             }
         }
     });
@@ -152,7 +154,6 @@ function createCharts(){
 * Formatte les données pour le Camembert
 */
 function fillPie(datas){
-    //console.log(datas);
     var finalDatas = {};
     var datasets = [];
     var types = [];
@@ -191,7 +192,6 @@ function fillPie(datas){
     });
     finalDatas.labels = types;
     finalDatas.datasets = datasets;
-    //console.log(finalDatas);
     fillChart(camembert, finalDatas);
 
     gridDetails(datas);//affichage du tableau des détails
@@ -210,11 +210,9 @@ function fillBar(datas){
             data: Object.values(datas[i].animaux),
             backgroundColor: colors[i]
         };
-        //console.log(datas[i]);
     }
     finalDatas.labels = Object.keys(datas[i].animaux);
     finalDatas.datasets = datasets;
-    //console.log(finalDatas);
     fillChart(baton, finalDatas);
 }
 
@@ -235,17 +233,31 @@ function fillChart(chart, allDatas){
 var legendClickHandler = function (e, legendItem) {
     var ci = this.chart;
     var index = legendItem.index;
+
+    hideSlices(ci, index);
+
+    //Maj du jsGrid
+    updateGrid(ci, index);
+};
+
+/**
+ * Cache les parts du camembert
+ * @param ci
+ * @param index
+ */
+function hideSlices(ci, index){
     var toHide = aConfigDataSets[index];
 
     var meta1 = ci.getDatasetMeta(0).data[index];
-    //console.log(ci);
     meta1.hidden = !meta1.hidden;
     for(j in toHide){
         var meta = ci.getDatasetMeta(1).data[toHide[j]];
         meta.hidden = !meta.hidden;
     }
     ci.update();
-};
+
+    return meta1.hidden;
+}
 
 /**
  *
@@ -253,7 +265,6 @@ var legendClickHandler = function (e, legendItem) {
  */
 var sliceClickHandler = function(e, args) {
     var ci = this.chart;
-    //console.log(ci);
     if(ci.data.datasets.length !== 0){//les donnees ont été chargées
         var element = ci.getElementsAtEvent(e)[0];
         if (element) {
@@ -303,11 +314,37 @@ function gridDetails(data) {
             type: 'text'
         });
     }
-    console.log(details);
 
     $("#gridDetails").jsGrid({
         width : '100%',
         data: details,
-        fields: fields
+        fields: fields,
+        rowClass: function(item){
+            if(item.cacher){
+                return "hidden-row";
+            }
+            return "";
+        }
     });
+
+}
+
+/**
+ *
+ * update gridDetails
+ */
+function updateGrid(chart, index){
+    //var meta = chart.getDatasetMeta(0).data[index];
+    var meta = chart.getDatasetMeta(0);
+    var grid = $("#gridDetails");
+    var gridDetails = grid.jsGrid("option", "data");
+    if(chart.config.type === 'bar'){
+        gridDetails[index].cacher = meta.controller.chart.chart.config.data.datasets[index]._meta[1].hidden;
+        hideSlices(camembert, index);
+    }
+    else{
+        gridDetails[index].cacher = meta.data[index].hidden;
+        //meta.controller.chart.chart.config.data.datasets[index]._meta[1].hidden = meta.data[index].hidden;
+    }
+    grid.jsGrid("refresh");
 }
