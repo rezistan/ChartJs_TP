@@ -285,10 +285,9 @@ var sliceClickHandler = function(e, args) {
                 data = ci.data.datasets[datasetIndex].data[index]; //data
                 label = ci.data.datasets[datasetIndex].label[index]; //label
             }
-            else{
-                //console.log(element);
-                //console.log(args[0]);
-                datasetIndex = element._datasetIndex;
+            else{ //bar
+                datasetIndex = ci.getDatasetAtEvent(e)[0]._datasetIndex;
+                console.log(ci.getDatasetAtEvent(e)[datasetIndex]); ////////////////////////////////afficher taille
                 data = ci.data.datasets[datasetIndex].data[index]; //data
                 label = ci.data.datasets[datasetIndex].label; //label
             }
