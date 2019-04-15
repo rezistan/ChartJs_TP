@@ -66,9 +66,7 @@ function fillGrid(datas){
     }
     $("#jsGrid").jsGrid({
         width : '100%',
-
         data: groupes,
-
         fields: aFields,
         rowClick: function(args) {
             var forCharts = [];
@@ -195,6 +193,8 @@ function fillPie(datas){
     finalDatas.datasets = datasets;
     //console.log(finalDatas);
     fillChart(camembert, finalDatas);
+
+    gridDetails(datas);//affichage du tableau des détails
 }
 
 /**
@@ -230,7 +230,7 @@ function fillChart(chart, allDatas){
 
 /**
 *
-* Gère les clics sur les légendes du camembert
+* Gère les clics sur les légendes
 */
 var legendClickHandler = function (e, legendItem) {
     var ci = this.chart;
@@ -247,6 +247,10 @@ var legendClickHandler = function (e, legendItem) {
     ci.update();
 };
 
+/**
+ *
+ * Gère les clics sur les graphiques
+ */
 var sliceClickHandler = function(e, args) {
     var ci = this.chart;
     //console.log(ci);
@@ -255,18 +259,55 @@ var sliceClickHandler = function(e, args) {
         if (element) {
             var index = args[0]._index;
             var label, data, datasetIndex;
-            if(ci.config.type === 'pie'){
-                datasetIndex = element._datasetIndex;
+            var type = '';
+            if(ci.config.type === 'pie' || ci.config.type === 'doughnut'){
+                datasetIndex = args[0]._datasetIndex;
+                if(datasetIndex === 1){
+                    for(var i in aConfigDataSets){
+                        if(aConfigDataSets[i].includes(index)){
+                            type += ' ('+ci.data.datasets[0].label[i]+')'; //type des animaux
+                        }
+                    }
+                }
                 data = ci.data.datasets[datasetIndex].data[index]; //data
                 label = ci.data.datasets[datasetIndex].label[index]; //label
             }
             else{
-                //console.log(args);
+                //console.log(element);
+                //console.log(args[0]);
                 datasetIndex = element._datasetIndex;
                 data = ci.data.datasets[datasetIndex].data[index]; //data
-                label = ci.data.datasets[datasetIndex].label[index]; //label
+                label = ci.data.datasets[datasetIndex].label; //label
             }
-            $("#clicked").text(label+" : "+data);
+            $("#clicked").text(label+" : "+data+type);
         }
     }
 };
+
+
+/**
+ * JsGrid contenant les détails des graphiques
+ * @param data
+ */
+function gridDetails(data) {
+    var fields = [];
+    var details = [];
+    for(var i in data) {
+        var tabAnimaux = {type: data[i].type};
+        Object.assign(tabAnimaux, data[i].animaux); //concatenation d'objets
+        details = details.concat(tabAnimaux);
+    }
+    for(var key in details[0]){
+        fields.push({
+            name: key,
+            type: 'text'
+        });
+    }
+    console.log(details);
+
+    $("#gridDetails").jsGrid({
+        width : '100%',
+        data: details,
+        fields: fields
+    });
+}
