@@ -1,20 +1,25 @@
 <?php
 
-$aAnimaux = [
+$min = 15;
+$max = 70;
 
+$aAnimaux = [
     [
         'groupe' => 'domestiques',
         [
             'type' => 'chiens',
-            'animaux' => ['petit' => 45, 'moyen' => 50, 'grand' => 38, 'très grand' => 43 ]
+            'animaux' => ['petit' => mt_rand($min, $max), 'moyen' => mt_rand($min, $max),
+                'grand' => mt_rand($min, $max), 'très grand' => mt_rand($min, $max) ]
         ],
         [
             'type' => 'chats',
-            'animaux' => ['petit' => 29, 'moyen' => 33, 'grand' => 32, 'très grand' => 37]
+            'animaux' => ['petit' => mt_rand($min, $max), 'moyen' => mt_rand($min, $max),
+                'grand' => mt_rand($min, $max), 'très grand' => mt_rand($min, $max)]
         ],
         [
             'type' => 'moutons',
-            'animaux' => ['petit' => 29, 'moyen' => 44, 'grand' => 55, 'très grand' => 56]
+            'animaux' => ['petit' => mt_rand($min, $max), 'moyen' => mt_rand($min, $max),
+                'grand' => mt_rand($min, $max), 'très grand' => mt_rand($min, $max)]
         ]
     ]
 	,
@@ -22,23 +27,28 @@ $aAnimaux = [
         'groupe' => 'sauvages',
         [
             'type' => 'loups',
-            'animaux' => ['petit' => 29, 'moyen' => 44, 'grand' => 55, 'très grand' => 56]
+            'animaux' => ['petit' => mt_rand($min, $max), 'moyen' => mt_rand($min, $max),
+                'grand' => mt_rand($min, $max), 'très grand' => mt_rand($min, $max)]
         ],
         [
             'type' => 'tigres',
-            'animaux' => ['petit' => 29, 'moyen' => 55, 'grand' => 99, 'très grand' => 37]
+            'animaux' => ['petit' => mt_rand($min, $max), 'moyen' => mt_rand($min, $max),
+                'grand' => mt_rand($min, $max), 'très grand' => mt_rand($min, $max)]
         ],
         [
             'type' => 'lions',
-            'animaux' => ['petit' => 45, 'moyen' => 50, 'grand' => 38, 'très grand' => 43 ]
+            'animaux' => ['petit' => mt_rand($min, $max), 'moyen' => mt_rand($min, $max),
+                'grand' => mt_rand($min, $max), 'très grand' => mt_rand($min, $max) ]
         ],
         [
             'type' => 'renards',
-            'animaux' => ['petit' => 29, 'moyen' => 33, 'grand' => 32, 'très grand' => 37]
+            'animaux' => ['petit' => mt_rand($min, $max), 'moyen' => mt_rand($min, $max),
+                'grand' => mt_rand($min, $max), 'très grand' => mt_rand($min, $max)]
         ],
         [
             'type' => 'gnous',
-            'animaux' => ['petit' => 29, 'moyen' => 15, 'grand' => 87, 'très grand' => 23]
+            'animaux' => ['petit' => mt_rand($min, $max), 'moyen' => mt_rand($min, $max),
+                'grand' => mt_rand($min, $max), 'très grand' => mt_rand($min, $max)]
         ]
     ]
 ];
