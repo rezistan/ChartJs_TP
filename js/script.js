@@ -255,8 +255,6 @@ function hideSlices(ci, index){
         meta.hidden = !meta.hidden;
     }
     ci.update();
-
-    return meta1.hidden;
 }
 
 /**
