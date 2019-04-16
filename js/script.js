@@ -20,6 +20,7 @@ $(document).ready(function(){
             fillGrid(result);
         },
         error: function(err) {
+            console.log(err);
             alert('Aucune donnee...');
         }
     });
@@ -60,7 +61,7 @@ function fillGrid(datas){
             aFields.push({
                 name: aLabels[label],
                 type: "text"
-            })
+            });
         }
     }
     $("#jsGrid").jsGrid({
@@ -107,8 +108,18 @@ function createCharts(){
                         var total = dataset.data.reduce(function(previousValue, currentValue) {
                             return previousValue + currentValue;
                         });
+
+                        //Pourcentage des sous ensembles
+                        if(tooltipItem.datasetIndex === 1){
+                            for(var i in aConfigDataSets){
+                                if(aConfigDataSets[i].includes(tooltipItem.index)){
+                                    total = data.datasets[0].data[i];
+                                }
+                            }
+                        }
+
                         var currentValue = dataset.data[tooltipItem.index];
-                        var percentage = Math.floor(((currentValue/total) * 100)+0.5);
+                        var percentage = Math.round((currentValue/total) * 100);
                         return dataset.label[tooltipItem.index]+' : '+percentage + "%";
                     }   
                 }
@@ -165,8 +176,8 @@ function fillPie(datas){
     var data = [];
     var color = [];
     var label = [];
-    
-    for(var i in datas){
+
+    for(var i=0; i<datas.length; i++){
         totaux[i] = datas[i].total;
         types[i] = datas[i].type;
         var tailles = Object.keys(datas[i].animaux);
@@ -177,13 +188,12 @@ function fillPie(datas){
         aConfigDataSets[i] = []; //tableau associatif des dataSets
         for(var j=0; j<effectifs.length; j++){
             var newGradient = 0.3+j*0.15+')';
-            col = colors[i].replace(/[\d\.]+\)$/g, newGradient);
+            var col = colors[i].replace(/[\d\.]+\)$/g, newGradient);
             color.push(col);
 
             aConfigDataSets[i][j]=(i*effectifs.length)+j;
         }
     }
-    //console.log(aConfigDataSets);
     datasets.push({
         label: types,
         data: totaux,
@@ -271,26 +281,24 @@ var sliceClickHandler = function(e, args) {
         var element = ci.getElementsAtEvent(e)[0];
         if (element) {
             var index = args[0]._index;
-            var label, data, datasetIndex;
+            var datasetIndex = ci.getDatasetAtEvent(e)[0]._datasetIndex;
             var type = '';
+            var label;
             if(ci.config.type === 'pie' || ci.config.type === 'doughnut'){
-                datasetIndex = args[0]._datasetIndex;
                 if(datasetIndex === 1){
                     for(var i in aConfigDataSets){
                         if(aConfigDataSets[i].includes(index)){
-                            type+=' ('+ci.data.datasets[0].label[i]+')';//type des animaux
+                            type = ' ('+ci.data.datasets[0].label[i]+')';//type des animaux
                         }
                     }
                 }
-                data = ci.data.datasets[datasetIndex].data[index]; //data
                 label = ci.data.datasets[datasetIndex].label[index]; //label
             }
             else{ //bar
-                datasetIndex = ci.getDatasetAtEvent(e)[0]._datasetIndex;
-                data = ci.data.datasets[datasetIndex].data[index]; //data
                 label = ci.data.datasets[datasetIndex].label; //label
-                type += ' ('+ci.data.labels[index]+')';
+                type = ' ('+ci.data.labels[index]+')';
             }
+            var data = ci.data.datasets[datasetIndex].data[index]; //data
             $("#clicked").text(label+" : "+data+type);
         }
     }
@@ -320,7 +328,7 @@ function gridDetails(data) {
         width : '100%',
         data: details,
         fields: fields,
-        rowClass: function(item){
+        rowClass: function(item){ //détermine les lignes à cacher
             if(item.cacher){
                 return "hidden-row";
             }
@@ -337,14 +345,14 @@ function gridDetails(data) {
 function updateGrid(chart, index){
     var meta = chart.getDatasetMeta(0).data[index];
     var grid = $("#gridDetails");
-    var gridDetails = grid.jsGrid("option", "data");
+    var gridData = grid.jsGrid("option", "data");
     if(chart.config.type === 'bar'){
         var dataset = chart.config.data.datasets[index];
-        gridDetails[index].cacher = dataset._meta[1].hidden;
+        gridData[index].cacher = dataset._meta[1].hidden;
         hideSlices(camembert, index);
     }
-    else{
-        gridDetails[index].cacher = meta.hidden;
+    else{ //pie or doughnut
+        gridData[index].cacher = meta.hidden;
         var slice = baton.config.data.datasets[index];
         slice._meta[1].hidden = meta.hidden;
         baton.update();
