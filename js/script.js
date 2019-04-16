@@ -287,9 +287,9 @@ var sliceClickHandler = function(e, args) {
             }
             else{ //bar
                 datasetIndex = ci.getDatasetAtEvent(e)[0]._datasetIndex;
-                console.log(ci.getDatasetAtEvent(e)[datasetIndex]); ////////////////////////////////afficher taille
                 data = ci.data.datasets[datasetIndex].data[index]; //data
                 label = ci.data.datasets[datasetIndex].label; //label
+                type += ' ('+ci.data.labels[index]+')';
             }
             $("#clicked").text(label+" : "+data+type);
         }
