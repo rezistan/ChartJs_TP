@@ -16,36 +16,14 @@ $(document).ready(function(){
         url: 'model/model.php',
         dataType: 'json',
         cache: false,
-        success: function(result) {
-            fillGrid(result);
+        success: function(data) {
+            fillGrid(data);
         },
         error: function(err) {
             console.log(err);
-            alert('Aucune donnee...');
+            alert('Erreur reception donnees ...');
         }
     });
-    
-    //Met en place des listeners
-    $("#camembert").click( 
-        function(evt){
-            var clickDoghnut = camembert.getElementAtEvent(evt);
-            if(clickDoghnut[0] !== undefined){
-                var valClick = camembert.data.datasets[0].data[clickDoghnut[0]._index];
-                $("#valCamembert").val(valClick);
-            }
-        }
-    );  
-
-    $("#baton").click( 
-        function(evt){
-            var clickBar = baton.getElementAtEvent(evt);
-            if(clickBar[0] !== undefined){
-                var valClick = baton.data.datasets[0].data[clickBar[0]._index];
-                $("#valBaton").val(valClick);
-            }
-        }
-    );
-
 });
 
 /**
@@ -174,7 +152,7 @@ function fillPie(datas){
     var types = [];
     var totaux = [];
     var data = [];
-    var color = [];
+    var colors2 = [];
     var label = [];
 
     for(var i=0; i<datas.length; i++){
@@ -187,11 +165,12 @@ function fillPie(datas){
 
         aConfigDataSets[i] = []; //tableau associatif des dataSets
         for(var j=0; j<effectifs.length; j++){
+            aConfigDataSets[i][j]=(i*effectifs.length)+j;
+
+            //couleurs des ensembles
             var newGradient = 0.3+j*0.15+')';
             var col = colors[i].replace(/[\d\.]+\)$/g, newGradient);
-            color.push(col);
-
-            aConfigDataSets[i][j]=(i*effectifs.length)+j;
+            colors2.push(col);
         }
     }
     datasets.push({
@@ -202,7 +181,7 @@ function fillPie(datas){
     datasets.push({
         label: label,
         data: data,
-        backgroundColor: color
+        backgroundColor: colors2
     });
     finalDatas.labels = types;
     finalDatas.datasets = datasets;
@@ -335,7 +314,6 @@ function gridDetails(data) {
             return "";
         }
     });
-
 }
 
 /**
